@@ -4,17 +4,38 @@ import CrossroadsLayer from '../features/CrossroadsLayer';
 import SemaphoresLayer from '../features/SemaphoresLayer';
 import useLayersLoad from '../hooks/useLayersLoad';
 import { getCombinedExtent, isValidExtent, calculateExtentFromData } from '../utils/helpers';
+import { createEventHandlers } from '../utils/interactions'; // Именованный импорт
 
-const VectorLayers = ({ map, lineData, roadCrosData, semaphoresData }) => {
+const VectorLayers = ({ map, lineData, roadCrosData, semaphoresData, onHover, onClick, onDoubleClick }) => {
   const sourcesRef = useRef([]);
   const { onLayerLoad, allLayersLoaded } = useLayersLoad(3);
 
   const handleLayerLoad = useCallback((source) => {
-    sourcesRef.current.push(source);
-    onLayerLoad();
+    if (!sourcesRef.current.includes(source)) {
+      sourcesRef.current.push(source);
+      onLayerLoad();
+    }
   }, [onLayerLoad]);
 
-  // Приближение карты после загрузки всех слоев
+  // Инициализация обработчиков событий
+  useEffect(() => {
+    if (!map) return;
+
+    const eventHandlers = createEventHandlers(onHover, onClick, onDoubleClick);
+
+    // Добавляем обработчики на карту
+    map.on('pointermove', eventHandlers.handlePointerMove);
+    map.on('click', eventHandlers.handleClick);
+
+    // Очистка при размонтировании
+    return () => {
+      map.un('pointermove', eventHandlers.handlePointerMove);
+      map.un('click', eventHandlers.handleClick);
+      eventHandlers.clearHover();
+    };
+  }, [map, onHover, onClick, onDoubleClick]);
+
+  // Единый эффект для фита карты после загрузки всех слоев
   useEffect(() => {
     if (!map || !allLayersLoaded) return;
 
@@ -22,24 +43,16 @@ const VectorLayers = ({ map, lineData, roadCrosData, semaphoresData }) => {
       try {
         let combinedExtent = getCombinedExtent(sourcesRef.current);
         
-        console.log('All layers loaded, fitting to extent:', combinedExtent);
-        console.log('Sources count:', sourcesRef.current.length);
-        
-        // Если не удалось получить extent из источников, вычисляем из исходных данных
         if (!combinedExtent || !isValidExtent(combinedExtent)) {
-          console.log('Trying to calculate extent from raw data...');
           combinedExtent = calculateExtentFromData(lineData, roadCrosData, semaphoresData);
         }
         
         if (combinedExtent && isValidExtent(combinedExtent)) {
-          console.log('Fitting to valid extent:', combinedExtent);
           map.getView().fit(combinedExtent, {
             padding: [50, 50, 50, 50],
             duration: 1000,
             maxZoom: 18
           });
-        } else {
-          console.error('Cannot fit map: no valid extent found from any method');
         }
       } catch (error) {
         console.error('Error fitting map view:', error);

@@ -1,40 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import VectorLayer from 'ol/layer/Vector';
-import VectorSource from 'ol/source/Vector';
-import GeoJSON from 'ol/format/GeoJSON';
+import React from 'react';
+import useVectorLayer from '../hooks/useVectorLayer';
 import { roadStyle } from '../utils/styles';
 
 const RoadsLayer = ({ map, data, onLoad }) => {
-  const [layer, setLayer] = useState(null);
-
-  useEffect(() => {
-    if (!map || !data) return;
-
-    const vectorSource = new VectorSource({
-      features: new GeoJSON().readFeatures(data, {
-        featureProjection: 'EPSG:3857'
-      })
-    });
-
-    const vectorLayer = new VectorLayer({
-      source: vectorSource,
-      style: roadStyle
-    });
-
-    map.addLayer(vectorLayer);
-    setLayer(vectorLayer);
-
-    // Немедленное уведомление о загрузке слоя
-    if (onLoad) {
-      onLoad(vectorSource);
-    }
-
-    return () => {
-      if (map && vectorLayer) {
-        map.removeLayer(vectorLayer);
-      }
-    };
-  }, [map, data, onLoad]);
+  useVectorLayer({
+    map,
+    data,
+    style: roadStyle,
+    onLoad
+  });
 
   return null;
 };
