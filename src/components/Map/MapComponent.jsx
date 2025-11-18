@@ -8,6 +8,7 @@ import './MapComponent.css';
 import VectorLayers from './layers/VectorLayers';
 import Tooltip from '../Tooltip/Tooltip';
 import PropertiesPanel from '../PropertiesPanel/PropertiesPanel';
+import PanoramaModal from '../PanoramaModal/PanoramaModal';
 import { formatCoordinatesForTooltip } from './utils/interactions';
 
 // Импортируем данные
@@ -18,6 +19,8 @@ const MapComponent = () => {
   const [map, setMap] = useState(null);
   const [tooltip, setTooltip] = useState({ visible: false, content: '', position: [0, 0] });
   const [selectedFeature, setSelectedFeature] = useState(null);
+  const [panoramaFeature, setPanoramaFeature] = useState(null);
+  const [isPanoramaOpen, setIsPanoramaOpen] = useState(false);
 
   // Обработчик наведения мыши
   const handleHover = useCallback((hoverInfo) => {
@@ -43,12 +46,19 @@ const MapComponent = () => {
   // Обработчик двойного клика
   const handleDoubleClick = useCallback((feature) => {
     console.log('Double click on feature:', feature?.getProperties());
-    // Здесь будет открытие панорамы
+    setPanoramaFeature(feature);
+    setIsPanoramaOpen(true);
   }, []);
 
   // Закрытие панели свойств
   const handleClosePanel = useCallback(() => {
     setSelectedFeature(null);
+  }, []);
+
+  // Закрытие панорамы
+  const handleClosePanorama = useCallback(() => {
+    setIsPanoramaOpen(false);
+    setPanoramaFeature(null);
   }, []);
 
   useEffect(() => {
@@ -99,6 +109,12 @@ const MapComponent = () => {
       <PropertiesPanel 
         feature={selectedFeature}
         onClose={handleClosePanel}
+      />
+
+      <PanoramaModal 
+        isOpen={isPanoramaOpen}
+        onClose={handleClosePanorama}
+        feature={panoramaFeature}
       />
     </div>
   );
