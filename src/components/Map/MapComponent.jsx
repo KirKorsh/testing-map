@@ -2,11 +2,13 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Map, View } from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
+import { fromLonLat } from 'ol/proj';
 import 'ol/ol.css';
 import './MapComponent.css';
 import VectorLayers from './layers/VectorLayers';
 import Tooltip from '../Tooltip/Tooltip';
-import { formatCoordinatesForTooltip } from './utils/interactions'; // Именованный импорт
+import PropertiesPanel from '../PropertiesPanel/PropertiesPanel';
+import { formatCoordinatesForTooltip } from './utils/interactions';
 
 // Импортируем данные
 import { lineData, roadCrosData, semaphoresData } from '../../data/index.js';
@@ -44,8 +46,16 @@ const MapComponent = () => {
     // Здесь будет открытие панорамы
   }, []);
 
+  // Закрытие панели свойств
+  const handleClosePanel = useCallback(() => {
+    setSelectedFeature(null);
+  }, []);
+
   useEffect(() => {
-    // Инициализация карты
+    // Центр карты - Краснодар, преобразованный в EPSG:3857
+    const center = fromLonLat([38.97, 45.03]);
+
+    // Инициализация карты с OSM
     const initialMap = new Map({
       target: mapRef.current,
       layers: [
@@ -54,8 +64,8 @@ const MapComponent = () => {
         })
       ],
       view: new View({
-        center: [0, 0],
-        zoom: 2
+        center: center,
+        zoom: 13
       })
     });
 
@@ -65,23 +75,30 @@ const MapComponent = () => {
   }, []);
 
   return (
-    <div ref={mapRef} className="map-component">
-      {map && (
-        <VectorLayers 
-          map={map}
-          lineData={lineData}
-          roadCrosData={roadCrosData}
-          semaphoresData={semaphoresData}
-          onHover={handleHover}
-          onClick={handleClick}
-          onDoubleClick={handleDoubleClick}
+    <div className="map-container">
+      <div ref={mapRef} className="map-component">
+        {map && (
+          <VectorLayers 
+            map={map}
+            lineData={lineData}
+            roadCrosData={roadCrosData}
+            semaphoresData={semaphoresData}
+            onHover={handleHover}
+            onClick={handleClick}
+            onDoubleClick={handleDoubleClick}
+          />
+        )}
+        
+        <Tooltip 
+          position={tooltip.position}
+          content={tooltip.content}
+          visible={tooltip.visible}
         />
-      )}
-      
-      <Tooltip 
-        position={tooltip.position}
-        content={tooltip.content}
-        visible={tooltip.visible}
+      </div>
+
+      <PropertiesPanel 
+        feature={selectedFeature}
+        onClose={handleClosePanel}
       />
     </div>
   );
