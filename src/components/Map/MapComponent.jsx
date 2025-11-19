@@ -10,8 +10,6 @@ import Tooltip from '../Tooltip/Tooltip';
 import PropertiesPanel from '../PropertiesPanel/PropertiesPanel';
 import PanoramaModal from '../PanoramaModal/PanoramaModal';
 import { formatCoordinatesForTooltip } from './utils/interactions';
-
-// Импортируем данные
 import { lineData, roadCrosData, semaphoresData } from '../../data/index.js';
 
 const MapComponent = () => {
@@ -22,7 +20,7 @@ const MapComponent = () => {
   const [panoramaFeature, setPanoramaFeature] = useState(null);
   const [isPanoramaOpen, setIsPanoramaOpen] = useState(false);
 
-  // Обработчик наведения мыши
+  // Обработчики событий
   const handleHover = useCallback((hoverInfo) => {
     if (!hoverInfo) {
       setTooltip({ visible: false, content: '', position: [0, 0] });
@@ -37,35 +35,30 @@ const MapComponent = () => {
     });
   }, []);
 
-  // Обработчик клика
   const handleClick = useCallback((feature) => {
     setSelectedFeature(feature);
     console.log('Selected feature:', feature?.getProperties());
   }, []);
 
-  // Обработчик двойного клика
   const handleDoubleClick = useCallback((feature) => {
     console.log('Double click on feature:', feature?.getProperties());
     setPanoramaFeature(feature);
     setIsPanoramaOpen(true);
   }, []);
 
-  // Закрытие панели свойств
   const handleClosePanel = useCallback(() => {
     setSelectedFeature(null);
   }, []);
 
-  // Закрытие панорамы
   const handleClosePanorama = useCallback(() => {
     setIsPanoramaOpen(false);
     setPanoramaFeature(null);
   }, []);
 
+  // Инициализация карты
   useEffect(() => {
-    // Центр карты - Краснодар, преобразованный в EPSG:3857
     const center = fromLonLat([38.97, 45.03]);
 
-    // Инициализация карты с OSM
     const initialMap = new Map({
       target: mapRef.current,
       layers: [
