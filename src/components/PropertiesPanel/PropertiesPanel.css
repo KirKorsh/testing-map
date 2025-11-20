@@ -1,5 +1,5 @@
 .properties-panel {
-  position: fixed;
+  position: absolute; 
   top: 0;
   right: 0;
   width: 350px;
@@ -92,15 +92,3 @@
   flex: 1;
 }
 
-/* Стили для разных типов объектов */
-.properties-panel.road .property-group:first-child h4 {
-  color: #1976d2;
-}
-
-.properties-panel.crossroad .property-group:first-child h4 {
-  color: #d32f2f;
-}
-
-.properties-panel.semaphore .property-group:first-child h4 {
-  color: #388e3c;
-}

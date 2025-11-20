@@ -81,7 +81,7 @@ const MapComponent = memo(() => {
     <div className="map-container">
       <div 
         ref={mapRef} 
-        className={`map-component ${selectedFeature ? 'with-panel' : ''}`}
+        className="map-component"
       >
         {map && (
           <VectorLayers 
@@ -102,6 +102,7 @@ const MapComponent = memo(() => {
         />
       </div>
 
+      
       <PropertiesPanel 
         feature={selectedFeature}
         onClose={handleClosePanel}

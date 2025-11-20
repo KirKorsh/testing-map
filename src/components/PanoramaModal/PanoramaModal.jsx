@@ -13,7 +13,6 @@ const PanoramaModal = ({ isOpen, onClose, feature }) => {
     handleReset
   } = usePanorama(isOpen);
 
-  // Добавляем обработчики событий
   useEffect(() => {
     if (!isOpen) return;
 

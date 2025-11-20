@@ -16,7 +16,7 @@ const VectorLayers = memo(({
   onDoubleClick 
 }) => {
   const { onLayerLoad, allLayersLoaded } = useLayersLoad(3);
-  const loadedSourcesRef = useRef(new Set()); // Для отслеживания уникальных источников
+  const loadedSourcesRef = useRef(new Set()); 
   
   // Мемоизируем обработчики событий
   const memoizedOnHover = useCallback(onHover, []);

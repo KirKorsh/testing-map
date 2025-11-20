@@ -12,12 +12,6 @@
   left: 0;
 }
 
-/* Адаптация для панели свойств */
-.map-component.with-panel {
-  right: 350px;
-  width: calc(100% - 350px);
-}
-
 /* Мобильная адаптация */
 @media (max-width: 768px) {
   .properties-panel {

@@ -7,8 +7,25 @@ const PropertiesPanel = memo(({ feature, onClose }) => {
   const properties = feature.getProperties();
   const geometryType = feature.getGeometry().getType();
 
-  // Убираем служебные свойства geometry и style
+  // замена служебных свойств geometry и style
   const { geometry, style, ...displayProperties } = properties;
+
+  // Определяет тип объекта на основе геометрии и свойств
+  const getObjectType = () => {
+    if (geometryType === 'LineString') return 'Дорога';
+    if (geometryType === 'Polygon') return 'Перекрёсток';
+    if (geometryType === 'Point') {
+      // Для точек проверяем свойства
+      if (displayProperties.vertical_order !== undefined || 
+          displayProperties.roadid?.includes('r298p0')) {
+        return 'Светофор';
+      }
+      return 'Точка';
+    }
+    return geometryType;
+  };
+
+  const objectType = getObjectType();
 
   return (
     <div className="properties-panel">
@@ -19,10 +36,10 @@ const PropertiesPanel = memo(({ feature, onClose }) => {
       
       <div className="properties-panel-content">
         <div className="property-group">
-          <h4>Геометрия</h4>
+          <h4>Тип объекта</h4>
           <div className="property-item">
             <span className="property-label">Тип:</span>
-            <span className="property-value">{geometryType}</span>
+            <span className="property-value">{objectType}</span>
           </div>
         </div>
 
