@@ -1,39 +1,69 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import GeoJSON from 'ol/format/GeoJSON';
 
-const useVectorLayer = ({ map, data, style, onLoad, dataProjection = 'EPSG:4326', featureProjection = 'EPSG:3857' }) => {
+// Кэш для уже созданных слоев
+const layerCache = new Map();
+
+const useVectorLayer = ({ 
+  map, 
+  data, 
+  style, 
+  onLoad, 
+  dataProjection = 'EPSG:4326', 
+  featureProjection = 'EPSG:3857' 
+}) => {
   const [layer, setLayer] = useState(null);
   const [source, setSource] = useState(null);
+  const hasLoadedRef = useRef(false);
 
   useEffect(() => {
-    if (!map || !data) return;
+    if (!map || !data || hasLoadedRef.current) return;
 
-    const vectorSource = new VectorSource({
-      features: new GeoJSON().readFeatures(data, {
-        featureProjection,
-        dataProjection
-      })
+    const cacheKey = JSON.stringify({
+      dataLength: data?.features?.length,
+      dataProjection,
+      featureProjection
     });
 
-    const vectorLayer = new VectorLayer({
-      source: vectorSource,
-      style
-    });
+    let vectorLayer, vectorSource;
 
-    map.addLayer(vectorLayer);
+    // Проверяем кэш
+    if (layerCache.has(cacheKey)) {
+      const cached = layerCache.get(cacheKey);
+      vectorLayer = cached.layer;
+      vectorSource = cached.source;
+      map.addLayer(vectorLayer);
+    } else {
+      // Создаем новый слой
+      vectorSource = new VectorSource({
+        features: new GeoJSON().readFeatures(data, {
+          featureProjection,
+          dataProjection
+        })
+      });
+
+      vectorLayer = new VectorLayer({
+        source: vectorSource,
+        style
+      });
+
+      map.addLayer(vectorLayer);
+      // Сохраняем в кэш
+      layerCache.set(cacheKey, { layer: vectorLayer, source: vectorSource });
+    }
+
     setLayer(vectorLayer);
     setSource(vectorSource);
+    hasLoadedRef.current = true;
 
     if (onLoad) {
       onLoad(vectorSource);
     }
 
     return () => {
-      if (map && vectorLayer) {
-        map.removeLayer(vectorLayer);
-      }
+      // Не удаляем слой при демонтировании, только при полной размонтировке
     };
   }, [map, data, style, onLoad, dataProjection, featureProjection]);
 

@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { memo } from 'react';
 import useVectorLayer from '../hooks/useVectorLayer';
 import { crossroadStyle } from '../utils/styles';
 
-const CrossroadsLayer = ({ map, data, onLoad }) => {
+const CrossroadsLayer = memo(({ map, data, onLoad }) => {
   useVectorLayer({
     map,
     data,
@@ -11,6 +11,7 @@ const CrossroadsLayer = ({ map, data, onLoad }) => {
   });
 
   return null;
-};
+});
 
+CrossroadsLayer.displayName = 'CrossroadsLayer';
 export default CrossroadsLayer;

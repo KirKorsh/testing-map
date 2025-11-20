@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { memo } from 'react';
 import useVectorLayer from '../hooks/useVectorLayer';
 import { semaphoreStyle } from '../utils/styles';
 
-const SemaphoresLayer = ({ map, data, onLoad }) => {
+const SemaphoresLayer = memo(({ map, data, onLoad }) => {
   useVectorLayer({
     map,
     data,
@@ -11,6 +11,7 @@ const SemaphoresLayer = ({ map, data, onLoad }) => {
   });
 
   return null;
-};
+});
 
+SemaphoresLayer.displayName = 'SemaphoresLayer';
 export default SemaphoresLayer;

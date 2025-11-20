@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback, memo } from 'react';
 import { Map, View } from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
@@ -12,7 +12,7 @@ import PanoramaModal from '../PanoramaModal/PanoramaModal';
 import { formatCoordinatesForTooltip } from './utils/interactions';
 import { lineData, roadCrosData, semaphoresData } from '../../data/index.js';
 
-const MapComponent = () => {
+const MapComponent = memo(() => {
   const mapRef = useRef();
   const [map, setMap] = useState(null);
   const [tooltip, setTooltip] = useState({ visible: false, content: '', position: [0, 0] });
@@ -20,10 +20,10 @@ const MapComponent = () => {
   const [panoramaFeature, setPanoramaFeature] = useState(null);
   const [isPanoramaOpen, setIsPanoramaOpen] = useState(false);
 
-  // Обработчики событий
+  // Мемоизированные обработчики событий
   const handleHover = useCallback((hoverInfo) => {
     if (!hoverInfo) {
-      setTooltip({ visible: false, content: '', position: [0, 0] });
+      setTooltip(prev => prev.visible ? { visible: false, content: '', position: [0, 0] } : prev);
       return;
     }
 
@@ -37,11 +37,9 @@ const MapComponent = () => {
 
   const handleClick = useCallback((feature) => {
     setSelectedFeature(feature);
-    console.log('Selected feature:', feature?.getProperties());
   }, []);
 
   const handleDoubleClick = useCallback((feature) => {
-    console.log('Double click on feature:', feature?.getProperties());
     setPanoramaFeature(feature);
     setIsPanoramaOpen(true);
   }, []);
@@ -74,12 +72,17 @@ const MapComponent = () => {
 
     setMap(initialMap);
 
-    return () => initialMap.setTarget(null);
+    return () => {
+      initialMap.setTarget(null);
+    };
   }, []);
 
   return (
     <div className="map-container">
-      <div ref={mapRef} className="map-component">
+      <div 
+        ref={mapRef} 
+        className={`map-component ${selectedFeature ? 'with-panel' : ''}`}
+      >
         {map && (
           <VectorLayers 
             map={map}
@@ -111,6 +114,7 @@ const MapComponent = () => {
       />
     </div>
   );
-};
+});
 
+MapComponent.displayName = 'MapComponent';
 export default MapComponent;

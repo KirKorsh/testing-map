@@ -1,23 +1,23 @@
 import { useState, useEffect, useCallback } from 'react';
 
-const useLayersLoad = (layerCount) => {
+const useLayersLoad = (expectedLayerCount) => {
   const [loadedLayers, setLoadedLayers] = useState(0);
   const [allLayersLoaded, setAllLayersLoaded] = useState(false);
 
   const onLayerLoad = useCallback(() => {
     setLoadedLayers(prev => {
       const newCount = prev + 1;
-      console.log(`Layer loaded: ${newCount}/${layerCount}`);
+      console.log(`Layer loaded: ${newCount}/${expectedLayerCount}`);
       return newCount;
     });
-  }, [layerCount]);
+  }, [expectedLayerCount]);
 
   useEffect(() => {
-    if (loadedLayers >= layerCount && !allLayersLoaded) {
+    if (loadedLayers >= expectedLayerCount && !allLayersLoaded) {
       console.log('All layers loaded!');
       setAllLayersLoaded(true);
     }
-  }, [loadedLayers, layerCount, allLayersLoaded]);
+  }, [loadedLayers, expectedLayerCount, allLayersLoaded]);
 
   const reset = useCallback(() => {
     setLoadedLayers(0);

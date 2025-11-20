@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { memo } from 'react';
 import './Tooltip.css';
 
-const Tooltip = ({ position, content, visible }) => {
+const Tooltip = memo(({ position, content, visible }) => {
   if (!visible || !content) return null;
 
   return (
@@ -15,6 +15,7 @@ const Tooltip = ({ position, content, visible }) => {
       {content}
     </div>
   );
-};
+});
 
+Tooltip.displayName = 'Tooltip';
 export default Tooltip;

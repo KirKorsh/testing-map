@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { memo } from 'react';
 import './PropertiesPanel.css';
 
-const PropertiesPanel = ({ feature, onClose }) => {
+const PropertiesPanel = memo(({ feature, onClose }) => {
   if (!feature) return null;
 
   const properties = feature.getProperties();
@@ -46,6 +46,7 @@ const PropertiesPanel = ({ feature, onClose }) => {
       </div>
     </div>
   );
-};
+});
 
+PropertiesPanel.displayName = 'PropertiesPanel';
 export default PropertiesPanel;
