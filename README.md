@@ -1,16 +1,125 @@
-# React + Vite
+# Картографическое веб-приложение
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Веб-приложение для отображения картографических данных с использованием React и OpenLayers.
 
-Currently, two official plugins are available:
+## Технические требования
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Node.js версии 18.0 или выше
+- npm или yarn
 
-## React Compiler
+## Установка и запуск
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 1. Клонирование репозитория
 
-## Expanding the ESLint configuration
+```bash
+git clone <URL-репозитория>
+cd <название-папки-проекта>
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 2. Установка зависимостей
+
+```bash
+npm install
+```
+
+### 3. Запуск в режиме разработки
+
+```bash
+npm run dev
+```
+Приложение будет доступно по адресу: `http://localhost:5173`
+
+## Примечание
+Для просмотра 3д отображения на панораме необходимо находиться в ветке `dev-new-panorama-view`.
+
+
+### 4. Сборка для production
+
+```bash
+npm run build
+```
+
+Собранные файлы будут находиться в папке `dist`.
+
+### 5. Просмотр собранной версии
+
+```bash
+npm run preview
+```
+
+## Структура проекта
+
+```
+public/
+src/
+├── components/
+│   ├── Map/
+│   │   ├── features/
+│   │   │   ├── CrossroadsLayer.jsx
+│   │   │   ├── RoadsLayer.jsx
+│   │   │   └── SemaphoresLayer.jsx
+│   │   ├── hooks/
+│   │   │   ├── useLayersLoad.js
+│   │   │   ├── useMapEvents.js
+│   │   │   ├── useMapExtent.js
+│   │   │   └── useVectorLayer.js
+│   │   ├── layers/
+│   │   │   └── VectorLayers.jsx
+│   │   ├── utils/
+│   │   │   ├── helpers.js
+│   │   │   ├── interactions.js
+│   │   │   └── styles.js
+│   │   ├── MapComponent.css
+│   │   └── MapComponent.jsx
+│   ├── PanoramaModal/
+│   │   ├── hooks/
+│   │   │   └── usePanorama.js
+│   │   ├── PanoramaModal.css
+│   │   └── PanoramaModal.jsx
+│   ├── PropertiesPanel/
+│   │   ├── PropertiesPanel.css
+│   │   └── PropertiesPanel.jsx
+│   └── Tooltip/
+│       ├── Tooltip.css
+│       └── Tooltip.jsx
+├── data/
+│   ├── index.js
+│   ├── line.json
+│   ├── panorama.jpg
+│   ├── road_cros.json
+│   └── semaphores.json
+├── App.css
+├── App.jsx
+└── main.jsx
+```
+
+## Основные возможности
+
+- Отображение векторных слоев (дороги, перекрестки, светофоры)
+- Интерактивное взаимодействие с объектами на карте
+- Панель свойств объектов с информацией о типе объекта
+- Просмотр панорамных изображений при двойном клике
+- Всплывающие подсказки с координатами
+- Адаптивный дизайн
+
+## Используемые технологии
+
+- React 18
+- OpenLayers 9
+- Three.js (для панорамных просмотров)
+- Vite (сборка)
+- CSS3
+
+## Скрипты
+
+- `npm run dev` - запуск сервера разработки
+- `npm run build` - сборка проекта
+- `npm run preview` - предпросмотр собранной версии
+- `dev-new-panorama-view` - версия с 3д объектами на панораме
+  
+## Взаимодействие с картой
+
+- **Наведение курсора** - отображение подсказки с координатами
+- **Клик** - открытие панели свойств объекта
+- **Двойной клик** - открытие панорамного просмотра
+- **Закрытие панели** - клик на кнопку "×" в правом верхнем углу
